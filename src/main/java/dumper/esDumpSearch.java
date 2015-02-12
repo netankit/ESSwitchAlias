@@ -26,11 +26,19 @@ public class esDumpSearch {
 		System.out.println(responseGet.getSourceAsString());
 
 		/*
+		 * Remove the old alias and add a new alias for the same index.
+		 */
+
+		client.admin().indices().prepareAliases()
+				.removeAlias("index2", "alias2")
+				.addAlias("index2", "alias_new").execute().actionGet();
+
+		/*
 		 * Searching the index - Custom word search
 		 */
 
 		System.out.println("\n\nSEARCH RESPONSE Query:>> field3:Bank");
-		SearchResponse responseSearch = client.prepareSearch("alias2")
+		SearchResponse responseSearch = client.prepareSearch("alias_new")
 				.setTypes("val2")
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setQuery(QueryBuilders.matchQuery("field3", "Bank")).execute()
